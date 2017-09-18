@@ -1,0 +1,41 @@
+---
+title: "Lab 3"
+author: "James Glass, Jay Lee, Kevin Wong"
+date: "September 14, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(ggplot2)
+nj <- read_csv("http://andrewpbray.github.io/data/crime-train.csv", na = c("", "NA", "?"))
+attach(nj)
+```
+
+```{r pure linear}
+m1 <- lm(ViolentCrimesPerPop~ population + racePctWhite + numbUrban + MalePctDivorce + PctKids2Par + PctWorkMom + PctIlleg + PctPersDenseHous + PctHousOccup + PctHousOwnOcc + NumStreet,
+         data=nj)
+summary(m1)
+```
+
+```{r fit}
+group_C_fit <- function(training_data) {
+  model <- lm(ViolentCrimesPerPop ~ population, data = training_data)
+  model
+}
+```
+
+```{r MSE}
+group_C_MSE <- function(model, data){ 
+  SE <- c()
+  y_hat <- predict(model,data)
+  for (i in 1:800){
+    SE <- c(SE,(ViolentCrimesPerPop[i]-y_hat[i])^2)
+  }
+  return(sum(SE)/800)
+}
+
+
+group_C_MSE(m1) #replace model with the output model from group_C_fit
+```
